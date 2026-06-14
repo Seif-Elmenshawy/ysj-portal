@@ -413,7 +413,7 @@ export default function ApplicationForm() {
 
     if (currentSection === overviewId) {
       return (
-        <div className="form-section" style={{ padding: '0 20px' }}>
+        <div className="form-section">
           <h2 style={{ marginBottom: '12px' }}><i className="fas fa-info-circle"></i> Overview</h2>
           <div style={{ maxWidth: '820px', margin: '0', lineHeight: 1.7, fontSize: '15px', color: '#333' }}>
             <p style={{ marginTop: 0 }}>YSJ's Junior Research Program is a student research program designed to help high school students learn research from choosing a research question to publishing a full paper and become part of a community of passionate researchers.</p>
@@ -462,7 +462,7 @@ export default function ApplicationForm() {
     }
     if (currentSection === 1) {
       return (
-        <div className="form-section" style={{ padding: '0 20px' }}>
+        <div className="form-section">
           <h2><i className="fas fa-user"></i> Personal & Contact</h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>Your personal and contact information</p>
 
@@ -479,7 +479,7 @@ export default function ApplicationForm() {
             {fieldErrors.agreement && <div style={{ color: 'red' }}>{fieldErrors.agreement}</div>}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '12px' }}>
+          <div className="two-col mt-3">
             <div className="form-group">
               <label>Full Name * {fieldErrors.fullName && <span style={{color: 'red'}}>{fieldErrors.fullName}</span>}</label>
               <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} />
@@ -515,10 +515,10 @@ export default function ApplicationForm() {
 
     if (currentSection === 2) {
       return (
-        <div className="form-section" style={{ padding: '0 20px' }}>
+        <div className="form-section">
           <h2><i className="fas fa-school"></i> Education</h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>Your academic information</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+          <div className="two-col">
             <div className="form-group">
               <label>School Name * {fieldErrors.schoolName && <span style={{color: 'red'}}>{fieldErrors.schoolName}</span>}</label>
               <input type="text" name="schoolName" value={formData.schoolName} onChange={handleChange} />
@@ -567,7 +567,7 @@ export default function ApplicationForm() {
 
     if (currentSection === 3) {
       return (
-        <div className="form-section" style={{ padding: '0 20px' }}>
+        <div className="form-section">
           <h2><i className="fas fa-file-alt"></i> Essays</h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>Answer the following essay questions</p>
           <div className="form-group">
@@ -600,7 +600,7 @@ export default function ApplicationForm() {
 
     if (currentSection === 4) {
       return (
-        <div className="form-section" style={{ padding: '0 20px' }}>
+        <div className="form-section">
           <h2><i className="fas fa-lightbulb"></i> Experience</h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>Tell us about your research experience</p>
           <div className="form-group">
@@ -614,7 +614,7 @@ export default function ApplicationForm() {
 
     if (currentSection === 5) {
       return (
-        <div className="form-section" style={{ padding: '0 20px' }}>
+        <div className="form-section">
           <h2><i className="fas fa-hourglass-half"></i> Time Commitments</h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>Your availability and commitments</p>
           <div className="form-group">
@@ -640,11 +640,11 @@ export default function ApplicationForm() {
 
     if (currentSection === reviewSection.id) {
       return (
-        <div className="form-section" style={{ padding: '0 20px' }}>
+        <div className="form-section">
           <h2><i className="fas fa-clipboard-check"></i> Review & Submit</h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>Review before submitting</p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
+          <div className="two-col mb-3">
             {FORM_SECTIONS.filter(s => s.id !== overviewId && s.id !== reviewSection.id).map(section => (
               <div key={section.id} style={{ padding: '15px', backgroundColor: completedSections.includes(section.id) ? '#d4edda' : '#f5f5f5', borderRadius: '4px', border: `2px solid ${completedSections.includes(section.id) ? '#28a745' : '#ddd'}`, cursor: 'pointer' }} onClick={() => goToSection(section.id)}>
                 <h4><i className={section.icon}></i> {section.name}</h4>
@@ -676,7 +676,7 @@ export default function ApplicationForm() {
   };
 
   return (
-    <div className="page-enter" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="page-enter form-page">
       <div className="card">
         <div className="card-header">
           <h2><i className="fas fa-pencil-alt"></i> YSJ Junior Program Application</h2>
@@ -685,7 +685,7 @@ export default function ApplicationForm() {
         {/* Overview shown as a dedicated section via renderer */}
 
         {/* Navigation Tabs with Completion Status */}
-        <div style={{ display: 'flex', overflowX: 'auto', borderBottom: '2px solid #ddd', backgroundColor: '#f9f9f9', marginBottom:"10px" }}>
+        <div className="section-tabs">
           {FORM_SECTIONS.map((section) => {
             const isComplete = isSectionComplete(section.id);
             
@@ -724,30 +724,30 @@ export default function ApplicationForm() {
             {renderSection()}
 
             {/* Navigation Buttons */}
-            <div style={{ marginTop: '30px', display: 'flex', gap: '10px', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', gap: '10px' }}>
+            <div className="form-actions">
+              <div className="form-actions-group">
                 <button
                   type="button"
                   onClick={handleClearForm}
-                  style={{ padding: '10px 20px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  className="btn btn-secondary"
                 >
                   <i className="fas fa-trash"></i> Clear
                 </button>
                 <button
                   type="button"
                   onClick={saveDraft}
-                  style={{ padding: '10px 20px', backgroundColor: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  className="btn btn-primary"
                 >
                   <i className="fas fa-save"></i> Save Draft
                 </button>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div className="form-actions-group">
                 <button
                   type="button"
                   onClick={handlePrev}
                   disabled={FORM_SECTIONS.findIndex(s => s.id === currentSection) === 0}
-                  style={{ padding: '10px 20px', backgroundColor: FORM_SECTIONS.findIndex(s => s.id === currentSection) === 0 ? '#ccc' : '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: FORM_SECTIONS.findIndex(s => s.id === currentSection) === 0 ? 'not-allowed' : 'pointer' }}
+                  className="btn btn-secondary"
                 >
                   <i className="fas fa-arrow-left"></i> Previous
                 </button>
@@ -756,7 +756,7 @@ export default function ApplicationForm() {
                   <button
                     type="button"
                     onClick={handleNext}
-                    style={{ padding: '10px 20px', backgroundColor: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    className="btn btn-primary"
                   >
                     Next <i className="fas fa-arrow-right"></i>
                   </button>
@@ -764,7 +764,7 @@ export default function ApplicationForm() {
                   <button
                     type="submit"
                     disabled={loading}
-                    style={{ padding: '10px 30px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: loading ? 'not-allowed' : 'pointer' }}
+                    className="btn btn-success"
                   >
                     {loading ? <><i className="fas fa-spinner fa-spin"></i> Submitting...</> : <><i className="fas fa-paper-plane"></i> Submit</>}
                   </button>

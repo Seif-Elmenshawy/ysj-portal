@@ -50,7 +50,7 @@ export default function ApplicationForm() {
 
   const [formData, setFormData] = useState({
     email: '', agreement: false,
-    fullName: '', personalEmail: '', phone: '', country: '', gender: '', birthDate: '',
+    fullName: '', phone: '', country: '', gender: '', birthDate: '',
     schoolName: '', gradeYear: '', /* preferredPlaces: array of 4 ordered by priority */ preferredPlaces: [
       { field: '' },
       { field: '' },
@@ -85,7 +85,7 @@ export default function ApplicationForm() {
         // Merge loaded draft with default values to ensure all fields exist
         const defaultFormData = {
           email: '', agreement: false,
-          fullName: '', personalEmail: '', phone: '', country: '', gender: '', birthDate: '',
+          fullName: '', phone: '', country: '', gender: '', birthDate: '',
           schoolName: '', gradeYear: '', preferredPlaces: [
             { field: '' },
             { field: '' },
@@ -173,10 +173,37 @@ export default function ApplicationForm() {
     }));
   };
 
-  // Generic input change handler
+  // Helpers to enforce English-only input and phone formatting
+  const sanitizeEnglish = (text = '') => {
+    return text.replace(/[^	\n\r\x20-\x7E]/g, '');
+  };
+
+  const sanitizePhone = (text = '') => {
+    // allow digits, plus, spaces, dashes, parentheses
+    return text.replace(/[^+0-9\s\-()]/g, '');
+  };
+
+  // Generic input change handler with sanitization
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    let val = value;
+
+    if (name === 'phone') {
+      val = sanitizePhone(val);
+    } else if (name === 'schoolName') {
+      // Allow school names in any language (preserve Unicode characters)
+      val = value;
+    } else if ([
+      'fullName','country','previousGrades','extracurricular','essay1','essay2','essay3',
+      'researchExperience','majorCommitments','hearAbout','additionalInfo','otherArea'
+    ].includes(name)) {
+      val = sanitizeEnglish(val);
+    } else if (name === 'email') {
+      // emails should be ASCII only
+      val = val.replace(/[^\x00-\x7F]/g, '');
+    }
+
+    setFormData(prev => ({ ...prev, [name]: val }));
     setFieldErrors(prev => {
       const copy = { ...prev };
       delete copy[name];
@@ -212,11 +239,12 @@ export default function ApplicationForm() {
   const isSectionComplete = (sectionId) => {
     switch (sectionId) {
       case 1:
-        return formData.email && formData.agreement && formData.fullName && formData.personalEmail && 
+        return formData.email && formData.agreement && formData.fullName && 
                formData.phone && formData.country && formData.gender && formData.birthDate;
       case 2:
         return formData.schoolName && formData.gradeYear &&
                (formData.preferredPlaces && formData.preferredPlaces[0] && formData.preferredPlaces[0].field) &&
+               (formData.preferredPlaces && formData.preferredPlaces[1] && formData.preferredPlaces[1].field) &&
                formData.previousGrades && formData.extracurricular;
       case 3:
         // Ensure essays meet minimum/required word counts
@@ -239,18 +267,27 @@ export default function ApplicationForm() {
       if (!formData.email) errors.email = 'Required';
       if (!formData.agreement) errors.agreement = 'You must agree to the terms';
       if (!formData.fullName) errors.fullName = 'Required';
-      if (!formData.personalEmail) errors.personalEmail = 'Required';
       if (!formData.phone) errors.phone = 'Required';
       if (!formData.country) errors.country = 'Required';
       if (!formData.gender) errors.gender = 'Required';
       if (!formData.birthDate) errors.birthDate = 'Required';
+
+      // Email pattern validation (basic)
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
+      if (formData.email && !emailRegex.test(formData.email)) errors.email = 'Invalid email format';
+
+      // Phone must include country code (e.g. +123...); allow spaces in display but strip before testing
+      const phoneDigits = (formData.phone || '').replace(/\s+/g, '');
+      const phoneRegex = /^\+[0-9]{7,15}$/;
+      if (formData.phone && !phoneRegex.test(phoneDigits)) errors.phone = 'Include country code, e.g. +201234567890';
     }
 
     if (sectionId === 2) {
       if (!formData.schoolName) errors.schoolName = 'Required';
       if (!formData.gradeYear) errors.gradeYear = 'Required';
-      // Require at least the first prioritized place and its field
+      // Require at least the first two prioritized places and their fields
       if (!formData.preferredPlaces || !formData.preferredPlaces[0] || !formData.preferredPlaces[0].field) errors['preferredPlaces.0.field'] = 'First field selection is required';
+      if (!formData.preferredPlaces || !formData.preferredPlaces[1] || !formData.preferredPlaces[1].field) errors['preferredPlaces.1.field'] = 'Second field selection is required';
       if (!formData.previousGrades) errors.previousGrades = 'Required';
       if (!formData.extracurricular) errors.extracurricular = 'Required';
     }
@@ -332,7 +369,7 @@ export default function ApplicationForm() {
     if (window.confirm('Clear all data? This cannot be undone.')) {
       setFormData({
         email: '', agreement: false,
-        fullName: '', personalEmail: '', phone: '', country: '', gender: '', birthDate: '',
+        fullName: '', phone: '', country: '', gender: '', birthDate: '',
         schoolName: '', gradeYear: '', preferredPlaces: [
           { field: '' },{ field: '' },{ field: '' },{ field: '' }
         ], previousGrades: '', extracurricular: '',
@@ -468,7 +505,7 @@ export default function ApplicationForm() {
 
           <div className="form-group">
             <label>Email * {fieldErrors.email && <span style={{color: 'red'}}>{fieldErrors.email}</span>}</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} />
+            <input type="email" name="email" value={formData.email} onChange={handleChange} pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$" title="Enter a valid email address" />
           </div>
 
           <div className="form-group" style={{ marginTop: '12px' }}>
@@ -485,12 +522,8 @@ export default function ApplicationForm() {
               <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} />
             </div>
             <div className="form-group">
-              <label>Personal Email Address * {fieldErrors.personalEmail && <span style={{color: 'red'}}>{fieldErrors.personalEmail}</span>}</label>
-              <input type="email" name="personalEmail" value={formData.personalEmail} onChange={handleChange} placeholder="Please use a personal email" />
-            </div>
-            <div className="form-group">
               <label>Phone Number (including country code) * {fieldErrors.phone && <span style={{color: 'red'}}>{fieldErrors.phone}</span>}</label>
-              <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Example: +20 XXX XXX XXXX" />
+              <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Example: +20 123456789" pattern="^\+[0-9\s\-()]{7,}$" title="Include country code, e.g. +201234567890" />
             </div>
             <div className="form-group">
               <label>Country of Nationality * {fieldErrors.country && <span style={{color: 'red'}}>{fieldErrors.country}</span>}</label>
@@ -535,13 +568,13 @@ export default function ApplicationForm() {
             </div>
           </div>
           <div style={{ marginTop: '16px' }} className="form-group">
-            <label>Your prioritized placements (4) — only the first is required * {fieldErrors.preferredPlaces && <span style={{color: 'red'}}>{fieldErrors.preferredPlaces}</span>}</label>
-            <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>List up to 4 places in priority order. For each place, select the academic field you would like to pursue there. Only the first place is required.</p>
+            <label>Your prioritized placements (4) — first two are required * {fieldErrors.preferredPlaces && <span style={{color: 'red'}}>{fieldErrors.preferredPlaces}</span>}</label>
+            <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>List up to 4 places in priority order. For each place, select the academic field you would like to pursue there. Only the first two places place are required. It is advised to choose more fields, as this will increase acceptance chance.</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
               {(formData.preferredPlaces || [{},{},{},{}]).map((p, idx) => (
                 <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '6px', alignItems: 'center' }}>
                   <div>
-                    <label>Place {idx + 1} {idx === 0 ? '*' : <span>&nbsp;</span>} {fieldErrors[`preferredPlaces.${idx}.field`] && <span style={{color:'red'}}>{fieldErrors[`preferredPlaces.${idx}.field`]}</span>}</label>
+                    <label>Place {idx + 1} {(idx === 0 || idx === 1) ? '*' : <span>&nbsp;</span>} {fieldErrors[`preferredPlaces.${idx}.field`] && <span style={{color:'red'}}>{fieldErrors[`preferredPlaces.${idx}.field`]}</span>}</label>
                     <select value={p.field || ''} onChange={(e) => handlePlaceChange(idx, 'field', e.target.value)}>
                       <option value="">Select field</option>
                       {ACADEMIC_FIELDS.map(f => <option key={f} value={f}>{f}</option>)}
@@ -659,7 +692,7 @@ export default function ApplicationForm() {
             <h4 style={{ margin: '0 0 10px 0' }}><i className="fas fa-info-circle"></i> Summary</h4>
             <ul style={{ margin: 0, paddingLeft: '20px' }}>
               <li><strong>Full Name:</strong> {formData.fullName || 'Not provided'}</li>
-              <li><strong>Email:</strong> {formData.personalEmail || 'Not provided'}</li>
+              <li><strong>Email:</strong> {formData.email || 'Not provided'}</li>
               <li><strong>School:</strong> {formData.schoolName || 'Not provided'}</li>
               <li><strong>Grade:</strong> {formData.gradeYear || 'Not provided'}</li>
               <li><strong>Preferred placements:</strong> {(formData.preferredPlaces || []).map((p, i) => p.field ? `${i+1}. ${p.field}` : null).filter(Boolean).join(' | ') || 'Not provided'}</li>

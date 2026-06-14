@@ -622,8 +622,78 @@ tbody tr:hover {
 @media (max-width: 768px) {
   .hero-title { font-size: 32px; }
   :root { --hero-height: 160px; }
-  .app-banner .banner-inner { flex-direction: column; gap: 12px; }
+  .app-banner .banner-inner { flex-direction: column; gap: 12px; align-items: center; text-align: center; }
   .home-intro { padding: 20px; }
+}
+
+/* Improve banner layout on small screens */
+@media (max-width: 480px) {
+  .app-banner {
+    padding: 8px 10px;
+    border-bottom-width: 6px;
+  }
+
+  .app-banner .banner-inner {
+    padding: 8px 6px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .banner-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .app-title {
+    font-size: 16px;
+    line-height: 1.1;
+  }
+
+  .btn-hero {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .banner-tabs { flex-wrap: wrap; justify-content: center; }
+}
+
+/* Make banner visually integrated with hero on small screens */
+@media (max-width: 480px) {
+  .home-hero { height: 120px; }
+  .home-hero .hero-img { object-position: left top; }
+
+  .app-banner {
+    margin-top: -28px; /* overlap hero slightly */
+    border-bottom-width: 4px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), #fff);
+    width: calc(100% - 36px);
+    /* push banner to the right on small screens so left side remains visible */
+    margin-left: 50حء;
+    
+  }
+
+  .app-banner .banner-inner {
+    padding: 10px 12px;
+  }
+
+  .banner-left .app-title {
+    margin-bottom: 0;
+  }
 }
 
 /* Make homepage sections full width (backgrounds and content) */

@@ -75,14 +75,37 @@ export default function Home() {
         </div>
       </main>
 
-      <section className="contact-band">
-        <div className="container text-center">
-          <h3>If you encounter any problem please contact us</h3>
-          <div className="dots">
-            <span><a href=""><img src={facebook} alt="" /></a></span><span><a href=""><img src={insta} alt="" /></a></span><span><a href=""><img src={linkedin} alt="" /></a></span><span><a href=""><img src={whatsapp} alt="" /></a></span>
+    <footer>
+
+
+      <div className="footer-main">
+        <div className="container footer-content">
+          <div className="footer-section">
+            <h3>About YSJ</h3>
+            <p>YSJ Junior is a student research program supporting high-school researchers through mentorship and publication.</p>
+          </div>
+
+          <div className="footer-section">
+            <h3>Contact</h3>
+            <div className="social-links">
+              <a href="https://www.facebook.com/YouthScienceJournall" aria-label="facebook">Facebook</a>
+              <a href="https://www.instagram.com/ysciencejournal/" aria-label="instagram">Instagram</a>
+              <a href="https://www.linkedin.com/company/ysj/" aria-label="linkedin">LinkedIn</a>
+              <a href="mailto:ysciencejournal@gmail.com" aria-label="mail">Mail us</a>
+            </div>
+          </div>
+
+          <div className="footer-section">
+            <h3>Location</h3>
+            <p>STEM High School for Boys - 6th of October</p>
           </div>
         </div>
-      </section>
+
+        <div className="footer-bottom container text-center">
+          © 2026 YSJ — All rights reserved
+        </div>
+      </div>
+    </footer>
     </div>
   );
 }

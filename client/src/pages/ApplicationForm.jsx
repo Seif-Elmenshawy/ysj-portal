@@ -492,7 +492,7 @@ export default function ApplicationForm() {
             </ul>
 
             <p style={{ fontWeight: 600, marginTop: 12 }}>Note: Applications will be reviewed on a rolling basis, so apply now to secure your seat!</p>
-            <p style={{ fontSize: '16px', fontWeight: 700, color: '#a31313', marginTop: 6 }}>DEADLINE: 11th July 2026</p>
+            <p style={{ fontSize: '16px', fontWeight: 700, color: '#a31313', marginTop: 6 }}>DEADLINE: 11th July 2026, 23:59 EEST (UTC+3)</p>
           </div>
         </div>
       );

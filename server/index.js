@@ -18,7 +18,7 @@ const app = express()
 
 // Middleware
 app.use(cors({
-  origin: [process.env.FRONTEND_URL, "http://localhost:5173", "https://ysj-portal.vercel.app/", "https://junior-portal.ys-journal.org/"],
+  origin: [process.env.FRONTEND_URL, "http://localhost:5173", "https://ysj-portal.vercel.app", "https://junior-portal.ys-journal.org"],
   credentials: true
 }))
 app.use(express.json())

@@ -31,9 +31,9 @@ export const signUp = async (req, res) => {
     }
 
     // Create user with applicant role (email unverified)
-    const user = await User.create({ 
-      username, 
-      email, 
+    const user = await User.create({
+      username,
+      email,
       password,
       role: 'applicant',
       emailVerified: false
@@ -51,7 +51,7 @@ export const signUp = async (req, res) => {
     // Send verification email with the raw token
     try {
       await sendVerificationEmail(user.email, verificationToken, user.username)
-      return res.status(201).json({ 
+      return res.status(201).json({
         message: 'User created successfully. Verification email sent.',
         user: {
           id: user._id,
@@ -69,7 +69,7 @@ export const signUp = async (req, res) => {
       } catch (delErr) {
         console.error('Failed to delete user after email send failure:', delErr)
       }
-      return res.status(500).json({ 
+      return res.status(500).json({
         message: 'Registration failed: unable to send verification email',
         error: mailError.message
       })
@@ -104,7 +104,7 @@ export const logIn = async (req, res) => {
     }
 
     const token = jwtGenerator(user)
-    
+
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
@@ -121,13 +121,14 @@ export const logIn = async (req, res) => {
       return true
     })
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       message: "Login successful",
       user: {
         id: user._id,
         username: user.username,
         email: user.email,
         role: user.role,
+        application: user.application,
         applicationSubmitted: !!user.applicationSubmitted,
         applicationStatus: application.status || null,
         hasApplicationStarted
@@ -175,7 +176,7 @@ export const resetPassword = async (req, res) => {
     // Send email
     await sendPasswordResetEmail(user.email, resetToken, user.username)
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       message: "Password reset link has been sent to your email",
       success: true
     })
@@ -201,7 +202,7 @@ export const verifyEmail = async (req, res) => {
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
 
     // Find user with matching token
-    const user = await User.findOne({ 
+    const user = await User.findOne({
       verificationToken: hashedToken,
       verificationExpires: { $gt: Date.now() }
     })
@@ -216,7 +217,7 @@ export const verifyEmail = async (req, res) => {
     user.verificationExpires = null
     await user.save()
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       message: "Email verified successfully",
       success: true
     })
@@ -242,7 +243,7 @@ export const confirmPasswordReset = async (req, res) => {
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
 
     // Find user with valid reset token and not expired
-    const user = await User.findOne({ 
+    const user = await User.findOne({
       resetPasswordToken: hashedToken,
       resetPasswordExpires: { $gt: Date.now() }
     })
@@ -262,7 +263,7 @@ export const confirmPasswordReset = async (req, res) => {
     user.resetPasswordExpires = null
     await user.save()
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       message: "Password reset successfully",
       success: true
     })
@@ -342,7 +343,7 @@ export const submitApplication = async (req, res) => {
     user.applicationSubmitted = true
     await user.save()
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       message: "Application submitted successfully",
       application: user.application
     })
@@ -365,12 +366,12 @@ export const getAdminStats = async (req, res) => {
     // Strict admin-only check
     const userId = req.user.id
     const user = await User.findById(userId)
-    
+
     // Verify user exists and is admin
     if (!user) {
       return res.status(401).json({ message: "Unauthorized: User not found" })
     }
-    
+
     if (user.role !== 'admin') {
       return res.status(403).json({ message: "Forbidden: Admin access required" })
     }
@@ -397,6 +398,7 @@ export const getAdminStats = async (req, res) => {
  */
 export const getUser = async (req, res) => {
   try {
+
     const userId = req.user.id
 
     if (!userId) {
@@ -408,7 +410,7 @@ export const getUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" })
     }
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       user: {
         id: user._id,
         username: user.username,
@@ -440,13 +442,13 @@ export const testEmail = async (req, res) => {
     // Send test password reset email
     await sendPasswordResetEmail(email, "test-token-12345", "Test User")
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       message: "Test email sent successfully to " + email,
       success: true
     })
   } catch (error) {
     console.log("Test email error:", error)
-    return res.status(500).json({ 
+    return res.status(500).json({
       message: "Failed to send test email: " + error.message,
       error: error.message
     })
@@ -485,9 +487,9 @@ export const createAdmin = async (req, res) => {
     }
 
     // Create new admin user
-    const admin = await User.create({ 
-      username, 
-      email, 
+    const admin = await User.create({
+      username,
+      email,
       password,
       role: 'admin',
       emailVerified: true
@@ -495,7 +497,7 @@ export const createAdmin = async (req, res) => {
 
     const token = jwtGenerator(admin)
 
-    return res.status(201).json({ 
+    return res.status(201).json({
       message: "Admin account created successfully",
       user: {
         id: admin._id,

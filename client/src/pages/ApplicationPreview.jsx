@@ -1,12 +1,31 @@
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react"
+import api from "../utils/api.js"
 
 export default function ApplicationPreview() {
-  const { user } = useAuth();
+  //  const { user } = useAuth();
+  const [userData, setUserData] = useState({})
+  const [app, setApp] = useState({})
 
-  const app = user?.application || {};
+  const token = localStorage.getItem("token")
 
-  if (!user) {
+  const previewApplication = async (token) => {
+    const body = {
+      token
+    }
+
+    const response = await api.get("/users/profile")
+    const { user } = response.data
+    setUserData(user)
+    setApp(user.application)
+  }
+
+  useEffect(() => {
+    previewApplication(token)
+  }, [])
+
+  if (!userData) {
     return (
       <div style={{ padding: 20 }}>
         <h3>Please log in to view your application.</h3>
@@ -22,9 +41,9 @@ export default function ApplicationPreview() {
 
       <section style={{ marginTop: 12 }}>
         <h4>Personal</h4>
-        <div><strong>Full name:</strong> {app.fullName || user.username}</div>
+        <div><strong>Full name:</strong> {app.fullName || userData.username}</div>
         <div><strong>Phone:</strong> {app.phone || 'Not provided'}</div>
-        <div><strong>Email:</strong> {user.email}</div>
+        <div><strong>Email:</strong> {userData.email}</div>
         <div><strong>Country:</strong> {app.country || 'Not provided'}</div>
         <div><strong>Gender:</strong> {app.gender || 'Not provided'}</div>
         <div><strong>Birth date:</strong> {app.birthDate || 'Not provided'}</div>
@@ -62,7 +81,7 @@ export default function ApplicationPreview() {
 
       <section style={{ marginTop: 12 }}>
         <h4>Meta</h4>
-        <div><strong>Status:</strong> {app.status || (user.applicationSubmitted ? 'submitted' : 'draft')}</div>
+        <div><strong>Status:</strong> {app.status || (userData.applicationSubmitted ? 'submitted' : 'draft')}</div>
         <div><strong>Submitted At:</strong> {app.submittedAt ? new Date(app.submittedAt).toLocaleString() : 'Not submitted'}</div>
       </section>
 

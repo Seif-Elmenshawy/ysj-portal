@@ -21,14 +21,14 @@ const FORM_SECTIONS = [
   { id: 6, name: 'Review & Submit', icon: 'fas fa-paper-plane' }
 ];
 
-const ACADEMIC_FIELDS = ['Architecture','Astronomy & Astrophysics','Biology','Business & Economics','Chemistry','Computer Science','Engineering','Environmental Studies','Mathematics','Medicine & Health Sciences','Neuroscience','Physics','Psychology'];
+const ACADEMIC_FIELDS = ['Architecture', 'Astronomy & Astrophysics', 'Biology', 'Business & Economics', 'Chemistry', 'Computer Science', 'Engineering', 'Environmental Studies', 'Literature & Culture', 'Mathematics', 'Medicine & Health Sciences', 'Neuroscience', 'Philosophy', 'Physics', 'Political Sciences ', 'Psychology'];
 
 export default function ApplicationForm() {
   const { user, submitApplication } = useAuth();
   const { step } = useParams();
   const navigate = useNavigate();
-  
-  useEffect(()=> {
+
+  useEffect(() => {
     if (user.applicationSubmitted == true) {
       navigate("/")
     }
@@ -194,8 +194,8 @@ export default function ApplicationForm() {
       // Allow school names in any language (preserve Unicode characters)
       val = value;
     } else if ([
-      'fullName','country','previousGrades','extracurricular','essay1','essay2','essay3',
-      'researchExperience','majorCommitments','hearAbout','additionalInfo','otherArea'
+      'fullName', 'country', 'previousGrades', 'extracurricular', 'essay1', 'essay2', 'essay3',
+      'researchExperience', 'majorCommitments', 'hearAbout', 'additionalInfo', 'otherArea'
     ].includes(name)) {
       val = sanitizeEnglish(val);
     } else if (name === 'email') {
@@ -214,7 +214,7 @@ export default function ApplicationForm() {
   const handlePlaceChange = (index, field, value) => {
     setFormData(prev => {
       const places = Array.isArray(prev.preferredPlaces) ? [...prev.preferredPlaces] : [
-        { place: '', field: '' },{ place: '', field: '' },{ place: '', field: '' },{ place: '', field: '' }
+        { place: '', field: '' }, { place: '', field: '' }, { place: '', field: '' }, { place: '', field: '' }
       ];
       places[index] = { ...places[index], [field]: value };
       return { ...prev, preferredPlaces: places };
@@ -239,13 +239,13 @@ export default function ApplicationForm() {
   const isSectionComplete = (sectionId) => {
     switch (sectionId) {
       case 1:
-        return formData.email && formData.agreement && formData.fullName && 
-               formData.phone && formData.country && formData.gender && formData.birthDate;
+        return formData.email && formData.agreement && formData.fullName &&
+          formData.phone && formData.country && formData.gender && formData.birthDate;
       case 2:
         return formData.schoolName && formData.gradeYear &&
-               (formData.preferredPlaces && formData.preferredPlaces[0] && formData.preferredPlaces[0].field) &&
-               (formData.preferredPlaces && formData.preferredPlaces[1] && formData.preferredPlaces[1].field) &&
-               formData.previousGrades && formData.extracurricular;
+          (formData.preferredPlaces && formData.preferredPlaces[0] && formData.preferredPlaces[0].field) &&
+          (formData.preferredPlaces && formData.preferredPlaces[1] && formData.preferredPlaces[1].field) &&
+          formData.previousGrades && formData.extracurricular;
       case 3:
         // Ensure essays meet minimum/required word counts
         return wordCount(formData.essay1) >= 150 && wordCount(formData.essay2) >= 200 && wordCount(formData.essay2) <= 300 && wordCount(formData.essay3) >= 250 && wordCount(formData.essay3) <= 300;
@@ -371,7 +371,7 @@ export default function ApplicationForm() {
         email: '', agreement: false,
         fullName: '', phone: '', country: '', gender: '', birthDate: '',
         schoolName: '', gradeYear: '', preferredPlaces: [
-          { field: '' },{ field: '' },{ field: '' },{ field: '' }
+          { field: '' }, { field: '' }, { field: '' }, { field: '' }
         ], previousGrades: '', extracurricular: '',
         essay1: '', essay2: '', essay3: '',
         researchExperience: '',
@@ -504,7 +504,7 @@ export default function ApplicationForm() {
           <p style={{ color: '#666', marginBottom: '20px' }}>Your personal and contact information</p>
 
           <div className="form-group">
-            <label>Email * {fieldErrors.email && <span style={{color: 'red'}}>{fieldErrors.email}</span>}</label>
+            <label>Email * {fieldErrors.email && <span style={{ color: 'red' }}>{fieldErrors.email}</span>}</label>
             <input type="email" name="email" value={formData.email} onChange={handleChange} pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$" title="Enter a valid email address" />
           </div>
 
@@ -518,19 +518,19 @@ export default function ApplicationForm() {
 
           <div className="two-col mt-3">
             <div className="form-group">
-              <label>Full Name * {fieldErrors.fullName && <span style={{color: 'red'}}>{fieldErrors.fullName}</span>}</label>
+              <label>Full Name * {fieldErrors.fullName && <span style={{ color: 'red' }}>{fieldErrors.fullName}</span>}</label>
               <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} />
             </div>
             <div className="form-group">
-              <label>Phone Number (including country code) * {fieldErrors.phone && <span style={{color: 'red'}}>{fieldErrors.phone}</span>}</label>
+              <label>Phone Number (including country code) * {fieldErrors.phone && <span style={{ color: 'red' }}>{fieldErrors.phone}</span>}</label>
               <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Example: +20 123456789" pattern="^\+[0-9\s\-()]{7,}$" title="Include country code, e.g. +201234567890" />
             </div>
             <div className="form-group">
-              <label>Country of Nationality * {fieldErrors.country && <span style={{color: 'red'}}>{fieldErrors.country}</span>}</label>
+              <label>Country of Nationality * {fieldErrors.country && <span style={{ color: 'red' }}>{fieldErrors.country}</span>}</label>
               <input type="text" name="country" value={formData.country} onChange={handleChange} />
             </div>
             <div className="form-group">
-              <label>Gender * {fieldErrors.gender && <span style={{color: 'red'}}>{fieldErrors.gender}</span>}</label>
+              <label>Gender * {fieldErrors.gender && <span style={{ color: 'red' }}>{fieldErrors.gender}</span>}</label>
               <select name="gender" value={formData.gender} onChange={handleChange}>
                 <option value="">Select</option>
                 <option value="Male">Male</option>
@@ -538,7 +538,7 @@ export default function ApplicationForm() {
               </select>
             </div>
             <div className="form-group">
-              <label>Date of Birth * {fieldErrors.birthDate && <span style={{color: 'red'}}>{fieldErrors.birthDate}</span>}</label>
+              <label>Date of Birth * {fieldErrors.birthDate && <span style={{ color: 'red' }}>{fieldErrors.birthDate}</span>}</label>
               <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} />
             </div>
           </div>
@@ -553,11 +553,11 @@ export default function ApplicationForm() {
           <p style={{ color: '#666', marginBottom: '20px' }}>Your academic information</p>
           <div className="two-col">
             <div className="form-group">
-              <label>School Name * {fieldErrors.schoolName && <span style={{color: 'red'}}>{fieldErrors.schoolName}</span>}</label>
+              <label>School Name * {fieldErrors.schoolName && <span style={{ color: 'red' }}>{fieldErrors.schoolName}</span>}</label>
               <input type="text" name="schoolName" value={formData.schoolName} onChange={handleChange} />
             </div>
             <div className="form-group">
-              <label>Educational Grade (as of the 2026-2027 Academic Year) * {fieldErrors.gradeYear && <span style={{color: 'red'}}>{fieldErrors.gradeYear}</span>}</label>
+              <label>Educational Grade (as of the 2026-2027 Academic Year) * {fieldErrors.gradeYear && <span style={{ color: 'red' }}>{fieldErrors.gradeYear}</span>}</label>
               <select name="gradeYear" value={formData.gradeYear} onChange={handleChange}>
                 <option value="">Select</option>
                 <option value="Grade 10 (High School Sophomore)">Grade 10 (High School Sophomore)</option>
@@ -568,13 +568,13 @@ export default function ApplicationForm() {
             </div>
           </div>
           <div style={{ marginTop: '16px' }} className="form-group">
-            <label>Your prioritized placements (4) — first two are required * {fieldErrors.preferredPlaces && <span style={{color: 'red'}}>{fieldErrors.preferredPlaces}</span>}</label>
+            <label>Your prioritized placements (4) — first two are required * {fieldErrors.preferredPlaces && <span style={{ color: 'red' }}>{fieldErrors.preferredPlaces}</span>}</label>
             <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>List up to 4 places in priority order. For each place, select the academic field you would like to pursue there. Only the first two places place are required. It is advised to choose more fields, as this will increase acceptance chance.</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
-              {(formData.preferredPlaces || [{},{},{},{}]).map((p, idx) => (
+              {(formData.preferredPlaces || [{}, {}, {}, {}]).map((p, idx) => (
                 <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '6px', alignItems: 'center' }}>
                   <div>
-                    <label>Place {idx + 1} {(idx === 0 || idx === 1) ? '*' : <span>&nbsp;</span>} {fieldErrors[`preferredPlaces.${idx}.field`] && <span style={{color:'red'}}>{fieldErrors[`preferredPlaces.${idx}.field`]}</span>}</label>
+                    <label>Place {idx + 1} {(idx === 0 || idx === 1) ? '*' : <span>&nbsp;</span>} {fieldErrors[`preferredPlaces.${idx}.field`] && <span style={{ color: 'red' }}>{fieldErrors[`preferredPlaces.${idx}.field`]}</span>}</label>
                     <select value={p.field || ''} onChange={(e) => handlePlaceChange(idx, 'field', e.target.value)}>
                       <option value="">Select field</option>
                       {ACADEMIC_FIELDS.map(f => <option key={f} value={f}>{f}</option>)}
@@ -585,12 +585,12 @@ export default function ApplicationForm() {
             </div>
           </div>
           <div style={{ marginTop: '12px' }} className="form-group">
-            <label>Grade of each respective field in previous academic years (if applicable) * {fieldErrors.previousGrades && <span style={{color: 'red'}}>{fieldErrors.previousGrades}</span>}</label>
+            <label>Grade of each respective field in previous academic years (if applicable) * {fieldErrors.previousGrades && <span style={{ color: 'red' }}>{fieldErrors.previousGrades}</span>}</label>
             <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>Please mention the highest value that can be attained (e.g. 3.7/4.0, 92%, etc.)</p>
             <input type="text" name="previousGrades" value={formData.previousGrades} onChange={handleChange} />
           </div>
           <div style={{ marginTop: '12px' }} className="form-group">
-            <label>What extracurricular activities and achievements have you pursued in your area of academic interest? * {fieldErrors.extracurricular && <span style={{color: 'red'}}>{fieldErrors.extracurricular}</span>}</label>
+            <label>What extracurricular activities and achievements have you pursued in your area of academic interest? * {fieldErrors.extracurricular && <span style={{ color: 'red' }}>{fieldErrors.extracurricular}</span>}</label>
             <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>List relevant courses, certifications, online programs, workshops, bootcamps, or training experiences.</p>
             <textarea name="extracurricular" value={formData.extracurricular} onChange={handleChange} rows="4" placeholder="Include a brief description if applicable"></textarea>
           </div>
@@ -604,7 +604,7 @@ export default function ApplicationForm() {
           <h2><i className="fas fa-file-alt"></i> Essays</h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>Answer the following essay questions</p>
           <div className="form-group">
-            <label>Why do you want to join YSJ Junior, and what do you hope to gain from the experience? * {fieldErrors.essay1 && <span style={{color: 'red'}}>{fieldErrors.essay1}</span>}</label>
+            <label>Why do you want to join YSJ Junior, and what do you hope to gain from the experience? * {fieldErrors.essay1 && <span style={{ color: 'red' }}>{fieldErrors.essay1}</span>}</label>
             <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>Please respond in at least 150 words.</p>
             <textarea name="essay1" value={formData.essay1} onChange={handleChange} rows="5" placeholder="Your response..."></textarea>
             <div style={{ fontSize: '12px', color: wordCount(formData.essay1) < 150 ? '#a31313' : '#155724', marginTop: '6px' }}>
@@ -612,7 +612,7 @@ export default function ApplicationForm() {
             </div>
           </div>
           <div className="form-group" style={{ marginTop: '12px' }}>
-            <label>Tell us about something you learned purely because you were curious, not because it was required for school. What interested you about it, and what did you learn? * {fieldErrors.essay2 && <span style={{color: 'red'}}>{fieldErrors.essay2}</span>}</label>
+            <label>Tell us about something you learned purely because you were curious, not because it was required for school. What interested you about it, and what did you learn? * {fieldErrors.essay2 && <span style={{ color: 'red' }}>{fieldErrors.essay2}</span>}</label>
             <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>Please respond in 200-300 words.</p>
             <textarea name="essay2" value={formData.essay2} onChange={handleChange} rows="5" placeholder="Your response..."></textarea>
             <div style={{ fontSize: '12px', color: wordCount(formData.essay2) < 200 || wordCount(formData.essay2) > 300 ? '#a31313' : '#155724', marginTop: '6px' }}>
@@ -620,7 +620,7 @@ export default function ApplicationForm() {
             </div>
           </div>
           <div className="form-group" style={{ marginTop: '12px' }}>
-            <label>A study finds that students who spend more time reading books tend to earn higher grades. Does this mean reading books causes higher grades? Why or why not? What additional information would you want before reaching a conclusion? * {fieldErrors.essay3 && <span style={{color: 'red'}}>{fieldErrors.essay3}</span>}</label>
+            <label>A study finds that students who spend more time reading books tend to earn higher grades. Does this mean reading books causes higher grades? Why or why not? What additional information would you want before reaching a conclusion? * {fieldErrors.essay3 && <span style={{ color: 'red' }}>{fieldErrors.essay3}</span>}</label>
             <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>Please respond in 250-300 words.</p>
             <textarea name="essay3" value={formData.essay3} onChange={handleChange} rows="5" placeholder="Your response..."></textarea>
             <div style={{ fontSize: '12px', color: wordCount(formData.essay3) < 250 || wordCount(formData.essay3) > 300 ? '#a31313' : '#155724', marginTop: '6px' }}>
@@ -637,7 +637,7 @@ export default function ApplicationForm() {
           <h2><i className="fas fa-lightbulb"></i> Experience</h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>Tell us about your research experience</p>
           <div className="form-group">
-            <label>Please describe your research experience * {fieldErrors.researchExperience && <span style={{color: 'red'}}>{fieldErrors.researchExperience}</span>}</label>
+            <label>Please describe your research experience * {fieldErrors.researchExperience && <span style={{ color: 'red' }}>{fieldErrors.researchExperience}</span>}</label>
             <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>This experience does not need to be limited to professional or formal settings. We are looking for evidence of your capacity to learn and engage with research methodologies. You may include independent work, such as writing small articles, analyzing academic papers, participating in research programs and workshops, or any other suitable and meaningful ordeals.</p>
             <textarea name="researchExperience" value={formData.researchExperience} onChange={handleChange} rows="6" placeholder="Describe your research experience..."></textarea>
           </div>
@@ -651,16 +651,16 @@ export default function ApplicationForm() {
           <h2><i className="fas fa-hourglass-half"></i> Time Commitments</h2>
           <p style={{ color: '#666', marginBottom: '20px' }}>Your availability and commitments</p>
           <div className="form-group">
-            <label>Kindly provide a list of your major academic, professional, or personal commitments between August 2026 and October 2026 * {fieldErrors.majorCommitments && <span style={{color: 'red'}}>{fieldErrors.majorCommitments}</span>}</label>
+            <label>Kindly provide a list of your major academic, professional, or personal commitments between August 2026 and October 2026 * {fieldErrors.majorCommitments && <span style={{ color: 'red' }}>{fieldErrors.majorCommitments}</span>}</label>
             <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>For each commitment, please estimate the average number of hours per week you expect to spend on it.</p>
             <textarea name="majorCommitments" value={formData.majorCommitments} onChange={handleChange} rows="4" placeholder="List your commitments and estimated hours per week for each"></textarea>
           </div>
           <div className="form-group" style={{ marginTop: '12px' }}>
-            <label>How much time (hours per week) will you be able to commit to YSJ? * {fieldErrors.hoursAvailable && <span style={{color: 'red'}}>{fieldErrors.hoursAvailable}</span>}</label>
+            <label>How much time (hours per week) will you be able to commit to YSJ? * {fieldErrors.hoursAvailable && <span style={{ color: 'red' }}>{fieldErrors.hoursAvailable}</span>}</label>
             <input type="number" name="hoursAvailable" value={formData.hoursAvailable} onChange={handleChange} min="0" />
           </div>
           <div className="form-group" style={{ marginTop: '12px' }}>
-            <label>Where did you hear about us? * {fieldErrors.hearAbout && <span style={{color: 'red'}}>{fieldErrors.hearAbout}</span>}</label>
+            <label>Where did you hear about us? * {fieldErrors.hearAbout && <span style={{ color: 'red' }}>{fieldErrors.hearAbout}</span>}</label>
             <input type="text" name="hearAbout" value={formData.hearAbout} onChange={handleChange} />
           </div>
           <div className="form-group" style={{ marginTop: '12px' }}>
@@ -695,7 +695,7 @@ export default function ApplicationForm() {
               <li><strong>Email:</strong> {formData.email || 'Not provided'}</li>
               <li><strong>School:</strong> {formData.schoolName || 'Not provided'}</li>
               <li><strong>Grade:</strong> {formData.gradeYear || 'Not provided'}</li>
-              <li><strong>Preferred placements:</strong> {(formData.preferredPlaces || []).map((p, i) => p.field ? `${i+1}. ${p.field}` : null).filter(Boolean).join(' | ') || 'Not provided'}</li>
+              <li><strong>Preferred placements:</strong> {(formData.preferredPlaces || []).map((p, i) => p.field ? `${i + 1}. ${p.field}` : null).filter(Boolean).join(' | ') || 'Not provided'}</li>
               <li><strong>Extracurriculars:</strong> {formData.extracurricular || 'Not provided'}</li>
               <li><strong>Available Hours/Week:</strong> {formData.hoursAvailable || 'Not provided'}</li>
               <li><strong>Anything else:</strong> {formData.additionalInfo || 'Not provided'}</li>
@@ -721,7 +721,7 @@ export default function ApplicationForm() {
         <div className="section-tabs">
           {FORM_SECTIONS.map((section) => {
             const isComplete = isSectionComplete(section.id);
-            
+
             return (
               <button
                 key={section.id}

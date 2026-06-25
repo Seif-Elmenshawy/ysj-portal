@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -28,11 +28,75 @@ export default function ApplicationForm() {
   const { step } = useParams();
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const [prefilled, setPrefilled] = useState(false);
+
+  const editAllowed = location.state?.fromEdit || sessionStorage.getItem('applicationEditAccess') === 'true';
+
   useEffect(() => {
-    if (user.applicationSubmitted == true) {
-      navigate("/")
+    // Wait until user is loaded; only allow editing when navigated from home Edit button or when edit access is preserved.
+    if (user === null) return;
+    if (user?.applicationSubmitted && !editAllowed) {
+      navigate('/');
     }
-  }, [])
+  }, [user, editAllowed, navigate]);
+
+  // If navigating from the home Edit button and the user has an application,
+  // prefill the form with the submitted application values so the user can modify them.
+  useEffect(() => {
+    if (!editAllowed) return;
+    if (prefilled) return;
+    if (!user || !user.application) return;
+
+    try {
+      const app = user.application;
+      const preferred = Array.isArray(app.preferredFields) ? app.preferredFields : (Array.isArray(app.preferredPlaces) ? app.preferredPlaces.map(p => p.field) : []);
+
+      const initial = {
+        email: user.email || '',
+        agreement: true,
+        fullName: app.fullName || '',
+        phone: app.phone || '',
+        country: app.country || '',
+        gender: app.gender || '',
+        birthDate: app.birthDate || '',
+        schoolName: app.institution || '',
+        gradeYear: app.gradeYear || '',
+        preferredPlaces: [
+          { field: preferred[0] || '' },
+          { field: preferred[1] || '' },
+          { field: preferred[2] || '' },
+          { field: preferred[3] || '' }
+        ],
+        previousGrades: app.gradePrevious || '',
+        extracurricular: app.extracurricular || '',
+        essay1: app.essay1 || '',
+        essay2: app.essay2 || '',
+        essay3: app.essay3 || '',
+        researchExperience: app.researchExperience || '',
+        majorCommitments: app.majorCommitments || '',
+        hoursAvailable: app.hoursAvailable || '',
+        hearAbout: app.hearAbout || '',
+        additionalInfo: app.additionalInfo || '',
+        otherArea: app.otherArea || ''
+      };
+
+      setFormData(prev => ({ ...prev, ...initial }));
+
+      // Reconstruct display-only file lists from stored file names
+      setFileDisplay({
+        researchFiles: (app.researchFiles || []).map(name => ({ name, size: 0 })),
+        commentedFiles: (app.commentedFiles || []).map(name => ({ name, size: 0 })),
+        additionalFiles: (app.additionalFiles || []).map(name => ({ name, size: 0 }))
+      });
+
+      // Mark sections as completed so the review reflects submitted state
+      setCompletedSections([1, 2, 3, 4, 5]);
+      setPrefilled(true);
+    } catch (e) {
+      console.error('Failed to prefill application for edit:', e);
+    }
+  }, [user, prefilled]);
 
   const parseStep = (s) => {
     const n = parseInt(s);
@@ -340,7 +404,7 @@ export default function ApplicationForm() {
     if (idx >= 0 && idx < FORM_SECTIONS.length - 1) {
       const nextId = FORM_SECTIONS[idx + 1].id;
       setCurrentSection(nextId);
-      navigate(`/application/${nextId}`);
+        navigate(`/application/${nextId}`, { state: location.state });
       window.scrollTo(0, 0);
     }
   };
@@ -350,7 +414,7 @@ export default function ApplicationForm() {
     if (idx > 0) {
       const prevId = FORM_SECTIONS[idx - 1].id;
       setCurrentSection(prevId);
-      navigate(`/application/${prevId}`);
+        navigate(`/application/${prevId}`, { state: location.state });
       setError('');
       setFieldErrors({});
       window.scrollTo(0, 0);
@@ -359,7 +423,7 @@ export default function ApplicationForm() {
 
   const goToSection = (sectionId) => {
     setCurrentSection(sectionId);
-    navigate(`/application/${sectionId}`);
+      navigate(`/application/${sectionId}`, { state: location.state });
     setError('');
     setFieldErrors({});
     window.scrollTo(0, 0);
@@ -383,7 +447,7 @@ export default function ApplicationForm() {
       setFileDisplay({ researchFiles: [], commentedFiles: [], additionalFiles: [] });
       setCompletedSections([]);
       setCurrentSection(1);
-      navigate('/application/1');
+        navigate('/application/1', { state: location.state });
       localStorage.removeItem('applicationDraft');
       setError('');
       setSuccess('');
@@ -409,7 +473,7 @@ export default function ApplicationForm() {
       const firstIncomplete = FORM_SECTIONS.find(s => s.id !== overviewId && s.id !== reviewSection.id && Object.keys(validateSection(s.id)).length > 0);
       if (firstIncomplete) {
         setCurrentSection(firstIncomplete.id);
-        navigate(`/application/${firstIncomplete.id}`);
+          navigate(`/application/${firstIncomplete.id}`, { state: location.state });
       }
       return;
     }
@@ -422,6 +486,7 @@ export default function ApplicationForm() {
       const applicationSubmissionData = {
         ...formData,
         gpa: parseFloat(formData.gpa),
+        extracurricular: formData.extracurricular || '',
         // Send preferredFields as ordered array of selected field names
         preferredFields: (formData.preferredPlaces || []).map(p => p.field).filter(Boolean),
         researchFiles: fileDisplay.researchFiles.map(f => f.name),

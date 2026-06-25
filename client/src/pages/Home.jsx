@@ -56,8 +56,15 @@ export default function Home() {
                           <li><strong>Grade:</strong> {user.application?.gradeYear || 'Not provided'}</li>
                           <li><strong>Preferred fields:</strong> {(user.application?.preferredFields || user.application?.interest || []).join ? (user.application?.preferredFields || user.application?.interest || []).join(', ') : (user.application?.preferredFields || user.application?.interest || 'Not provided')}</li>
                         </ul>
-                        <div style={{ marginTop: 10 }}>
+                        <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
                           <Link to="/application/preview" className="btn btn-hero">View Application</Link>
+                          <Link
+                            to="/application"
+                            className="btn btn-hero btn-ghost"
+                            onClick={() => sessionStorage.setItem('applicationEditAccess', 'true')}
+                          >
+                            Edit Application
+                          </Link>
                         </div>
                       </div>
                     </div>

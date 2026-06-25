@@ -57,6 +57,7 @@ const userSchema = mongoose.Schema({
     gpa: Number,
     preferredFields: [String],
     gradePrevious: String,
+    extracurricular: String,
     researchExperience: String,
     majorCommitments: String,
     essay1: String,

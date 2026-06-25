@@ -54,6 +54,7 @@ export default function ApplicationPreview() {
         <div><strong>School / Institution:</strong> {app.institution || 'Not provided'}</div>
         <div><strong>Grade Year:</strong> {app.gradeYear || 'Not provided'}</div>
         <div><strong>Previous Grades:</strong> {app.gradePrevious || 'Not provided'}</div>
+        <div><strong>Extracurricular / Activities:</strong> {app.extracurricular || 'Not provided'}</div>
         <div><strong>Preferred Fields (by priority):</strong> {(app.preferredFields || []).length > 0 ? (app.preferredFields.join(' | ')) : 'Not provided'}</div>
       </section>
 
@@ -70,6 +71,7 @@ export default function ApplicationPreview() {
         <div style={{ whiteSpace: 'pre-wrap', marginTop: 6 }}>{app.researchExperience || 'Not provided'}</div>
         <div style={{ marginTop: 8 }}><strong>Major commitments:</strong> {app.majorCommitments || 'Not provided'}</div>
         <div><strong>Hours available / week:</strong> {app.hoursAvailable || 'Not provided'}</div>
+        <div style={{ marginTop: 8 }}><strong>Preferred time blocks:</strong> {app.timeBlocks || 'Not provided'}</div>
       </section>
 
       <section style={{ marginTop: 12 }}>

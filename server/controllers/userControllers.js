@@ -315,6 +315,7 @@ export const submitApplication = async (req, res) => {
     }
 
     const gpa = safeParseFloat(applicationData.gpa ?? applicationData.gpa_value ?? null);
+    const extracurricular = applicationData.extracurricular || applicationData.activities || applicationData.extracurriculars || applicationData.activity || '';
 
     user.application = {
       fullName: applicationData.fullName || applicationData.full_name || user.fullName || '',
@@ -327,6 +328,7 @@ export const submitApplication = async (req, res) => {
       gpa: gpa,
       preferredFields: preferredFields,
       gradePrevious: gradePrevious,
+      extracurricular: extracurricular,
       researchExperience: applicationData.researchExperience || applicationData.research_experience || '',
       majorCommitments: applicationData.majorCommitments || applicationData.major_commitments || '',
       essay1: applicationData.essay1 || '',
